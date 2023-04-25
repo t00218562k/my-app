@@ -6,9 +6,12 @@ import { FcGoogle } from "react-icons/fc";
 import { useCallback, useState } from "react";
 import { FieldValues, useForm, SubmitHandler } from "react-hook-form";
 import useRegisterModal from "@/app/hooks/useRegisterModal";
+import Modal from "./Modal";
+import Heading from "../Heading";
+import Input from "../inputs/Input";
 
 const RegisterModal = () => {
-    const RegisterModal = useRegisterModal();
+    const registerModal = useRegisterModal();
     const [isLoading, setIsLoading] = useState(false);
 
     const {
@@ -22,12 +25,64 @@ const RegisterModal = () => {
         }
     });
 
+    const onSubmit: SubmitHandler<FieldValues> = (data) => {
+        setIsLoading(true);
+        axios.post("/api/register", data)
+            .then(() => {
+                registerModal.onClose();
+            })
+            .catch(err => {
+                console.log(err);
+            })
+            .finally(() => {
+                setIsLoading(false);
+            })
+    };
 
-    const onSubmit: SubmitHandler<FieldValues> = useCallback(async (data) => {
-    return (
-        <div>
-            <h1>RegisterModal</h1>
+    const bodyContent = (
+        <div className='flex flex-col gap-4'>
+            <Heading 
+                title="Welcome to IBI"
+                subtitle="Create an account to continue"
+            />
+            <Input 
+                id="email"
+                label="Email"
+                disbaled={isLoading}
+                register={register}
+                errors={errors}
+                required
+            />
+             <Input 
+                id="password"
+                type="password"
+                label="Password"
+                disbaled={isLoading}
+                register={register}
+                errors={errors}
+                required
+            />
+             <Input 
+                id="name"
+                label="Name"
+                disbaled={isLoading}
+                register={register}
+                errors={errors}
+                required
+            />
         </div>
+    )
+    
+    return (
+        <Modal 
+            disabled={isLoading}
+            isOpen={registerModal.isOpen}
+            title="Register"
+            actionLabel="Continue"
+            onClose={registerModal.onClose}
+            onSubmit={handleSubmit(onSubmit)}
+            body={bodyContent}
+        />
     );
 }
 
