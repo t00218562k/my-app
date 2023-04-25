@@ -5,6 +5,7 @@ interface containerProps {
 }
 
 const Container: React.FC<containerProps> = ({children}) => {
+    children
     return (
         <div className='
             max-w-[2520px] 
